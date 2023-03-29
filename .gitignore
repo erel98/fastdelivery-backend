@@ -1,5 +1,5 @@
 __pycache__/
-env/
+virt/
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
