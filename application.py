@@ -1,13 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from DBManager import DBManager
-import os
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import bcrypt
 import uuid
+import os
 from datetime import datetime
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+from DBManager import DBManager
+
 
 application = Flask(__name__)
 CORS(application, resources=r'/*')
@@ -171,6 +172,27 @@ def deleteAvailability(id):
         )
     
     return jsonify(response), 200
+
+@application.route("/create-delivery", methods=["POST"])
+def createDeliveryRequest():
+    post_data = request.get_json()
+    delivery = {
+        'id': str(uuid.uuid1()),
+        'created_at': str(datetime.now()),
+        'origin': post_data['origin'],
+        'destination': post_data['destination'],
+        'order_nr': post_data['order_nr'],
+        'weight': post_data['weight'],
+        'dimensions': post_data['dimensions'],
+        'type': post_data['type'],
+        'customer_info': post_data['customer_info'],
+        'rider_id': post_data['rider_id'],
+        'comment': post_data['comment']
+    }
+    
+    db.store_an_item(delivery, region, 'deliveries')
+    
+    return jsonify(delivery), 200
 
 if __name__ == '__main__':
     application.run()
