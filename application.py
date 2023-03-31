@@ -210,6 +210,27 @@ def createDeliveryRequest():
     
     return jsonify(delivery), 200
 
+@application.route("/delivery/<id>", methods=["POST"])
+@jwt_required()
+def updateDeliveryStatus(id):
+    post_data = request.get_json()
+    key_info = {
+        'id': id
+    }
+    
+    response = db.update_item(
+       table_name='deliveries',
+       region=region,
+       key=key_info,
+       updateExpression='SET status = :status', 
+       expressionAttributes={
+           ':status': post_data['status'],
+        }
+    )
+    
+    return response, 200
+    
+    
 if __name__ == '__main__':
     application.run()
     #application.run(host="0.0.0.0", port="8080")
