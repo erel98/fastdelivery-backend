@@ -161,7 +161,6 @@ def updateAvailability(id):
 @application.route("/availability/delete/<id>", methods=["POST"])
 @jwt_required()
 def deleteAvailability(id):
-    
     key = {'id': {
             'S': id
             }
@@ -173,12 +172,26 @@ def deleteAvailability(id):
     
     return jsonify(response), 200
 
-@application.route("/create-delivery", methods=["POST"])
+
+@application.route("/delivery", methods=["GET"])
+@jwt_required()
+def getDeliveries():
+    id = get_jwt_identity()
+    fe = Key('rider_id').eq(id)
+    
+    deliveries = db.scan(table_name='deliveries',
+                         region=region, 
+                         filter_expression=fe)['Items']
+    
+    return jsonify(deliveries), 200
+
+@application.route("/delivery/create", methods=["POST"])
 def createDeliveryRequest():
     post_data = request.get_json()
     delivery = {
         'id': str(uuid.uuid1()),
         'created_at': str(datetime.now()),
+        'status': 'Received',
         'origin': post_data['origin'],
         'destination': post_data['destination'],
         'order_nr': post_data['order_nr'],
@@ -190,7 +203,10 @@ def createDeliveryRequest():
         'comment': post_data['comment']
     }
     
-    db.store_an_item(delivery, region, 'deliveries')
+    db.store_an_item(item=delivery,
+                     region=region,
+                     table_name='deliveries'
+                )
     
     return jsonify(delivery), 200
 

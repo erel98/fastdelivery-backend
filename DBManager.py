@@ -12,8 +12,15 @@ class DBManager:
         try:
             dynamodb_resource = boto3.resource("dynamodb", region_name=region)
             print("\ncreating the table {} ...".format(table_name))
-            self.table = dynamodb_resource.create_table(TableName=table_name, KeySchema=key_schema, AttributeDefinitions=attribute_definitions,
-                ProvisionedThroughput=provisioned_throughput)
+            self.table = dynamodb_resource.create_table(TableName=table_name, 
+                                                        KeySchema=key_schema, 
+                                                        AttributeDefinitions=attribute_definitions,
+                                                        ProvisionedThroughput=provisioned_throughput,
+                                                        StreamSpecification={
+                                                                            'StreamEnabled': True,
+                                                                            'StreamViewType': 'NEW_IMAGE'
+                                                                        }
+                                                    )
 
             # Wait until the table exists.
             self.table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
