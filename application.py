@@ -191,7 +191,7 @@ def createDeliveryRequest():
     delivery = {
         'id': str(uuid.uuid1()),
         'created_at': str(datetime.now()),
-        'status': 'Received',
+        'delivery_status': 'Received',
         'origin': post_data['origin'],
         'destination': post_data['destination'],
         'order_nr': post_data['order_nr'],
@@ -222,9 +222,9 @@ def updateDeliveryStatus(id):
        table_name='deliveries',
        region=region,
        key=key_info,
-       updateExpression='SET status = :status', 
+       updateExpression='SET delivery_status = :status', 
        expressionAttributes={
-           ':status': post_data['status'],
+           ':status': post_data['delivery_status'],
         }
     )
     
@@ -232,5 +232,5 @@ def updateDeliveryStatus(id):
     
     
 if __name__ == '__main__':
-    application.run()
-    #application.run(host="0.0.0.0", port="8080")
+    #application.run()
+    application.run(host="0.0.0.0", port="8080")
