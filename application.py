@@ -228,10 +228,10 @@ def updateDeliveryStatus(id):
         }
     )
     new_delivery = response['Attributes']
-    
+    print(new_delivery)
     #update requesting app:
     params = {'orderNumber': new_delivery['order_nr'],
-              'status': new_delivery['status'],
+              'delivery_status': new_delivery['delivery_status'],
               'datetime': str(datetime.now())
     }
     # POST to API
