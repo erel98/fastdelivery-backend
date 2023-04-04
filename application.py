@@ -227,8 +227,16 @@ def updateDeliveryStatus(id):
            ':status': post_data['delivery_status'],
         }
     )
+    new_delivery = response['Attributes']
     
-    return response, 200
+    #update requesting app:
+    params = {'orderNumber': new_delivery['order_nr'],
+              'status': new_delivery['status'],
+              'datetime': str(datetime.now())
+    }
+    # POST to API
+    
+    return jsonify(new_delivery), 200
     
     
 if __name__ == '__main__':
