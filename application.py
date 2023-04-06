@@ -6,6 +6,7 @@ from boto3.dynamodb.conditions import Key, Attr
 import bcrypt
 import uuid
 import os
+import requests
 from datetime import datetime
 from DBManager import DBManager
 
@@ -229,12 +230,14 @@ def updateDeliveryStatus(id):
     )
     new_delivery = response['Attributes']
     print(new_delivery)
-    #update requesting app:
+    # update requesting app:
     params = {'orderNumber': new_delivery['order_nr'],
-              'delivery_status': new_delivery['delivery_status'],
-              'datetime': str(datetime.now())
-    }
-    # POST to API
+               'updatedAttributes': {
+                  'orderStatus': new_delivery['delivery_status'] 
+                },
+              }
+    url = 'https://bc096ti86i.execute-api.us-east-1.amazonaws.com/Prod/order'
+    response = requests.post(url, json=params)
     
     return jsonify(new_delivery), 200
     
