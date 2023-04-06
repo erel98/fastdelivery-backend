@@ -236,7 +236,7 @@ def updateDeliveryStatus(id):
                   'orderStatus': new_delivery['delivery_status'] 
                 },
               }
-    url = 'https://bc096ti86i.execute-api.us-east-1.amazonaws.com/Prod/order'
+    url = 'https://bc096ti86i.execute-api.us-east-1.amazonaws.com/Prod/orders'
     response = requests.post(url, json=params)
     
     return jsonify(new_delivery), 200
