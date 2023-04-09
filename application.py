@@ -60,7 +60,6 @@ def getMe():
         'fullName': item['fullName'],
         'age': int(item['age']),
         'gender': int(item['gender']),
-        'imageUrl': item['imageUrl'],
         'mobile': item['mobile'],
         'username': item['username'],
         'email': item['email'],
