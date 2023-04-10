@@ -3,6 +3,8 @@ from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
+import logging
 import bcrypt
 import uuid
 import os
@@ -165,12 +167,17 @@ def deleteAvailability(id):
             'S': id
             }
         }
-    response = db.delete_item(region=region,
+    success = True
+    try:
+        response = db.delete_item(region=region,
                    table_name='availabilities',
                    key=key
         )
+    except (ClientError, KeyError) as e: 
+        logging.error(e)
+        success = False
     
-    return jsonify(response), 200
+    return {'success': success}, 200
 
 
 @application.route("/delivery", methods=["GET"])
