@@ -23,7 +23,6 @@ jwt = JWTManager(application)
 
 @application.route("/login", methods=["POST"])
 def login():
-    print(request)
     post_data = request.get_json()
     email = post_data.get("email")
     password = post_data.get("password").encode('utf-8')
@@ -73,33 +72,35 @@ def getMe():
 @jwt_required()
 def updateMe():
     post_data = request.get_json()
-    print(request)
     name = post_data.get("fullName")
     age = post_data.get("age")
     gender = post_data.get("gender")
     mobile = post_data.get("mobile")
     username = post_data.get("username")
-    
     id = get_jwt_identity()
     key_info = {
         'id': id
     }
-    
-    response = db.update_item(
-       table_name='users',
-       region=region,
-       key=key_info,
-       updateExpression='SET fullName = :fullName, age = :age, gender = :gender, mobile = :mobile, username = :username', 
-       expressionAttributes={
-           ':fullName': name,
-           ':age': age,
-           ':gender': gender,
-           ':mobile': mobile,
-           ':username': username,
-        }
-    )
-    
-    return response, 200
+    success = True
+    try:
+        response = db.update_item(
+           table_name='users',
+           region=region,
+           key=key_info,
+           updateExpression='SET fullName = :fullName, age = :age, gender = :gender, mobile = :mobile, username = :username', 
+           expressionAttributes={
+               ':fullName': name,
+               ':age': age,
+               ':gender': gender,
+               ':mobile': mobile,
+               ':username': username,
+            }
+        )
+    except (ClientError, KeyError) as e:
+        logging.error(e)
+        success = False
+
+    return {'success': success}, 200
 
 @application.route("/availability", methods=["GET"])
 @jwt_required()
@@ -235,7 +236,6 @@ def updateDeliveryStatus(id):
         }
     )
     new_delivery = response['Attributes']
-    print(new_delivery)
     # update requesting app:
     params = {'orderNumber': new_delivery['order_nr'],
                'updatedAttributes': {
