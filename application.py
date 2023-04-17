@@ -128,12 +128,9 @@ def createAvailability():
         'fromTime': post_data['fromTime'],
         'toTime': post_data['toTime']
     }
-    dayOfWeek = post_data['dayOfWeek']
-    fromTime = post_data['fromTime']
-    toTime = post_data['toTime']
     
     db.store_an_item(region, 'availabilities', new_availability)
-    return {'status': 'success'}, 200
+    return jsonify(new_availability), 200
 
 @application.route("/availability/update/<id>", methods=["POST"])
 @jwt_required()
