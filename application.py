@@ -234,8 +234,9 @@ def updateDeliveryStatus(id):
     )
     new_delivery = response['Attributes']
     # update requesting app:
-    params = {'orderNumber': new_delivery['order_nr'],
-               'updatedAttributes': {
+    params = {'action': 'update_order',
+              'orderNumber': new_delivery['order_nr'],
+              'updatedAttributes': {
                   'orderStatus': new_delivery['delivery_status'] 
                 },
               }
